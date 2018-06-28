@@ -1,0 +1,69 @@
+{% block content %}
+{% include "header.html" %}
+
+		<div class="all-meals">
+			<div class="back">
+        <button type="button" class="back-button" onclick="location.href='{{url_for('showIngredients', meal_id = meals.id)}}';">
+          <span class="back-text">&laquo; Zurück</span>
+        </button>
+      </div>
+			<div class="recipe-title">
+        <h2 class="meals-name">{{meals.name}}</h2>
+      </div>
+
+			<div class="ingredients">
+				<h3>Zutaten</h3>
+				{% for ingredient in ingredients %}
+				<ul>
+					<li class="ingredients-text"><a href="{{url_for('ingredientInfo', meal_id = meals.id, ingredient_id = ingredient.id)}}" style="color: #2d3c49;">{{ingredient.name}}</a></li>
+				</ul>
+				<div class="separator"></div>
+				{% endfor %}
+			</div>
+
+			<div>
+        <form action="#" method = "post">
+          <div class="row">
+            <div class="col-25-3">
+              <label>Neue Zutat 1</label>
+            </div>
+            <div class="col-75-2">
+              <input type="text" id="zutat1" name="zutat1" placeholder="Zutat">
+							<input type="text" id="preis1" name="preis1" placeholder="Preis">
+							<input type="text" id="supermarkt1" name="supermarkt1" placeholder="Supermarkt">
+            </div>
+          </div>
+					<div class="row">
+            <div class="col-25-3">
+              <label>Neue Zutat 2</label>
+            </div>
+            <div class="col-75-2">
+              <input type="text" id="zutat2" name="zutat2" placeholder="Zutat">
+							<input type="text" id="preis2" name="preis2" placeholder="Preis">
+							<input type="text" id="supermarkt2" name="supermarkt2" placeholder="Supermarkt">
+            </div>
+          </div>
+					<div class="row">
+            <div class="col-25-3">
+              <label>Neue Zutat 3</label>
+            </div>
+            <div class="col-75-2">
+              <input type="text" id="zutat3" name="zutat3" placeholder="Zutat">
+							<input type="text" id="preis3" name="preis3" placeholder="Preis">
+							<input type="text" id="supermarkt3" name="supermarkt3" placeholder="Supermarkt">
+            </div>
+          </div>
+          <div class="row">
+						<div class="col-25-4"></div>
+            <div class="col-75-2">
+              <input type="submit" value="Hinzufügen">
+            </div>
+          </div>
+        </form>
+			</div>
+		</div>
+
+
+
+
+{% endblock %}

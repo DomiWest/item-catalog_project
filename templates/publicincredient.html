@@ -1,0 +1,29 @@
+{% block content %}
+{% include "header.html" %}
+
+
+    <div class="all-meals">
+      <div class="back">
+        <button type="button" class="back-button" onclick="location.href='{{url_for('showIngredients', meal_id = meals.id)}}';">
+          <span class="back-text">&laquo; Zurück</span>
+        </button>
+      </div>
+      <div class="recipe-title">
+        <p class="meals-name">{{meals.name}}</p>
+      </div>
+
+
+      <div class="ingredients-details">
+        <h3>{{ingredients.name}}</h3>
+        <div class="ingredients-data"><b>Preis:</b> <i>{{ingredients.price}}</i> €</div>
+        <div class="ingredients-data"><b>Erhältlich bei:</b> <i>{{ingredients.supermarket}}</i></div>
+
+        <button class="edit-ingredient" onclick="location.href = '{{url_for('editIngredient', meal_id = meals.id, ingredient_id = ingredients.id)}}';">Bearbeiten</button>
+        <button class="delete-incredient-final" onclick="location.href = '{{url_for('deleteIngredient', meal_id = meals.id, ingredient_id = ingredients.id)}}';">Löschen</button>
+      </div>
+
+    </div>
+
+
+
+{% endblock %}

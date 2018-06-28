@@ -1,0 +1,15 @@
+{% block content %}
+{% include "header.html" %}
+
+		<div class="all-meals">
+    {% for meal in meals %}
+			<button class="meal" onclick="location.href = '{{url_for('showIngredients', meal_id = meal.id)}}';">
+				<h2 class="meal-text">{{meal.name}}</h2>
+			</button>
+    {% endfor %}
+      <button class="add-meal" onclick="location.href = '{{url_for('newMeal')}}';">
+        <h2 class="add-text">Gericht hinzufügen</h2>
+      </button>
+    </div>
+
+{% endblock %}

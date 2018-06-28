@@ -1,0 +1,38 @@
+{% block content %}
+{% include "header.html" %}
+
+<div class="all-meals">
+	<div class="back">
+		<button type="button" class="back-button" onclick="location.href='{{url_for('showIngredients', meal_id=i.id)}}';">
+			<span class="back-text">&laquo; Zurück</span>
+		</button>
+	</div>
+
+	<div>
+		<form action="#" method = "post">
+			<div class="row">
+				<div class="col-25-2">
+					<label for="gericht">Gericht</label>
+				</div>
+				<div class="col-75">
+					<input type="text" id="gericht" name="gericht" value="{{i.name}}">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-25-2">
+					<label for="rezept">Rezept</label>
+				</div>
+				<div class="col-75">
+					<textarea id="rezept" name="rezept" rows="10">{{i.recipe}}</textarea>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-25"></div>
+				<div class="col-75">
+					<input type="submit" value="Änderungen speichern">
+				</div>
+			</div>
+		</form>
+	</div>
+
+{% endblock %}

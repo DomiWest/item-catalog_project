@@ -1,0 +1,21 @@
+{% block content %}
+{% include "header.html" %}
+
+<div class="all-meals">
+  <div class="back">
+    <button type="button" class="back-button" onclick="location.href='javascript: history.go(-1)'">
+      <span class="back-text">&laquo; Zurück</span>
+    </button>
+  </div>
+
+  <div class="delete-question">
+    <p class="delete-question-text">Sind Sie sicher, dass Sie die Zutat <span style="font-weight: bold;"> {{i.name}} </span> endgültig löschen wollen?</p>
+    <form method='post'>
+      <button class="delete-meal-final" onclick="location.href = '{{url_for('deleteIngredient', meal_id=i.meal_id, ingredient_id=i.id)}}'" method='post'>Endgültig löschen</button>
+    </form>
+  </div>
+
+
+</div>
+
+{% endblock %}

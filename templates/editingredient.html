@@ -1,0 +1,42 @@
+{% block content %}
+{% include "header.html" %}
+
+
+      <div class="all-meals">
+        <div class="back">
+          <button type="button" class="back-button" onclick="location.href='{{url_for('ingredientInfo', meal_id = meals.id, ingredient_id = i.id)}}';">
+            <span class="back-text">&laquo; Zurück</span>
+          </button>
+        </div>
+        <div class="recipe-title">
+          <p class="meals-name">{{meals.name}}</p>
+        </div>
+
+
+        <div class="ingredients-details">
+          <h3>{{i.name}}</h3>
+          <div class="ingredients-data"><b>Preis:</b> <i>{{i.price}}</i> €</div>
+          <div class="ingredients-data"><b>Erhältlich bei:</b> <i>{{i.supermarket}}</i></div>
+        </div>
+
+        <div>
+          <form action="#" method = "post">
+            <div class="row">
+              <div class="edit-ingredient2">
+                <label><b>{{i.name}}</b> bearbeiten:</label>
+              </div>
+              <div class="edit-ingredient3">
+                <input type="text" id="zutat" name="zutat" value="{{i.name}}">
+                <input type="text" id="preis" name="preis" value="{{i.price}}">
+                <input type="text" id="supermarkt" name="supermarkt" value="{{i.supermarket}}">
+              </div>
+            </div>
+            <button class="edit-recipe-button" onclick="location.href = '{{url_for('editIngredient', meal_id = meals.id, ingredient_id = i.id)}}';">Änderungen speichern</button>
+
+          </form>
+
+        </div>
+      </div>
+
+
+{% endblock %}
