@@ -1,3 +1,6 @@
+#============================================
+#import of all the necessary files and modules
+#============================================
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -12,33 +15,35 @@ import json
 from flask import make_response
 import requests
 
+#===================
+# Flask instance
+#===================
 app = Flask(__name__)
 APPLICATION_NAME = "Item Catalog Project"
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Restaurant Menu Application"
 
+#===================
+# connection to the database
+#===================
 engine = create_engine('sqlite:///mealingredients.db')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-@app.route("/")
-@app.route("/meals/")
-def showMeals():
-    meals = session.query(Meal).order_by(Meal.name)
-    return render_template("publicmeals.html", meals=meals)
 
-
-# Create anti-forgery state token
+#===================
+# Login Routing
+#===================
+# Login - Create anti-forgery state token
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
+# GConnect
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -118,6 +123,27 @@ def gconnect():
     print "done!"
     return output
 
+# User Helper Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+# DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
@@ -148,6 +174,17 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+#===================
+# Flask Routing
+#===================
+# function that connects to the landing page of the app --> publicmeals.html
+@app.route("/")
+@app.route("/meals/")
+def showMeals():
+    meals = session.query(Meal).order_by(Meal.name)
+    return render_template("publicmeals.html", meals=meals)
+
+#function that connects to the page where new meals can be added to the database --> newmeal.html
 @app.route("/meals/new/", methods=["GET","POST"])
 def newMeal():
     if "username" not in login_session:
@@ -160,11 +197,14 @@ def newMeal():
     else:
         return render_template("newmeal.html")
 
+#function that connects to the page where added meals can be deleted from the database --> newmeal.html
 @app.route("/meals/<int:meal_id>/delete", methods=["GET","POST"])
 def deleteMeal(meal_id):
     deletedMeal = session.query(Meal).filter_by(id=meal_id).one()
     meals = session.query(Meal).filter_by(id=meal_id).one()
     deletedIngredient = session.query(MealIngredient).filter_by(meal_id=meal_id).all()
+    if "username" not in login_session:
+        return redirect ("/login")
     if request.method == "POST":
         session.delete(deletedMeal)
         for d in deletedIngredient:
@@ -174,17 +214,20 @@ def deleteMeal(meal_id):
     else:
         return render_template("deletemeal.html", i=deletedMeal)
 
+#function that connects to the page where all added ingredients and the recipe are displayed --> publicrecipe.html
 @app.route("/meals/<int:meal_id>/ingredients/")
 def showIngredients(meal_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id).all()
     return render_template("publicrecipe.html", meals=meals, ingredients=ingredients)
 
-
+#function that connects to the page where new ingredients can be added to the database --> newingredient.html
 @app.route("/meals/<int:meal_id>/ingredients/new", methods=["GET","POST"])
 def newIngredient(meal_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id).all()
+    if "username" not in login_session:
+        return redirect ("/login")
     if request.method == "POST":
         if request.form["zutat1"] or request.form["preis1"] or request.form["supermarkt1"]:
             newIngredient1 = MealIngredient(name = request.form["zutat1"], price = request.form["preis1"], supermarket = request.form["supermarkt1"], meal_id = meal_id)
@@ -203,10 +246,13 @@ def newIngredient(meal_id):
     else:
         return render_template("newingredient.html", ingredients=ingredients, meals = meals)
 
+#function that connects to the page where added ingredients can be edited  --> editmeal.html
 @app.route("/meals/<int:meal_id>/ingredients/edit", methods=["GET","POST"])
 def editMeal(meal_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     editedMeal = session.query(Meal).filter_by(id=meal_id).one()
+    if "username" not in login_session:
+        return redirect ("/login")
     if request.method == "POST":
         if request.form["gericht"]:
             editedMeal.name = request.form["gericht"]
@@ -219,16 +265,20 @@ def editMeal(meal_id):
     else:
         return render_template("editmeal.html", i=editedMeal)
 
+#function that connects to the page where specific information for ingredients (name, price, supermarket) are displayed --> publicincredient.html
 @app.route("/meals/<int:meal_id>/ingredients/<int:ingredient_id>/", methods=["GET","POST"])
 def ingredientInfo(meal_id, ingredient_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id, id=ingredient_id).one()
     return render_template("publicincredient.html", meals=meals, ingredients=ingredients)
 
+#function that connects to the page where specific information for ingredients (name, price, supermarket) can be edited --> editingredient.html
 @app.route("/meals/<int:meal_id>/ingredients/<int:ingredient_id>/edit", methods=["GET","POST"])
 def editIngredient(meal_id, ingredient_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id, id=ingredient_id).one()
+    if "username" not in login_session:
+        return redirect ("/login")
     if request.method == "POST":
         if request.form["zutat"]:
             ingredients.name = request.form["zutat"]
@@ -245,10 +295,13 @@ def editIngredient(meal_id, ingredient_id):
     else:
         return render_template("editingredient.html", i=ingredients, meals=meals)
 
+#function that connects to the page where ingredients plus all the specific informaton (name, price, supermarket) can be deleted form the database --> deleteingredient.html
 @app.route("/meals/<int:meal_id>/ingredients/<int:ingredient_id>/delete", methods=["GET","POST"])
 def deleteIngredient(meal_id, ingredient_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     deletedIngredient = session.query(MealIngredient).filter_by(id=ingredient_id).one()
+    if "username" not in login_session:
+        return redirect ("/login")
     if request.method == "POST":
         session.delete(deletedIngredient)
         session.commit()
@@ -256,24 +309,23 @@ def deleteIngredient(meal_id, ingredient_id):
     else:
         return render_template("deleteingredient.html", i=deletedIngredient)
 
-
-
+#===================
+# JSON
+#===================
+#function that creates JSON-endpoint for one of the added meals --> all ingredients and recipe
 @app.route("/meals/<int:meal_id>/ingredients/JSON")
 def mealJSON(meal_id):
     meal = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id).all()
     return jsonify(Dish=meal.serialize, Ingredients=[i.serialize for i in ingredients])
 
+#function that creates JSON-endpoint for one of added ingredients --> name, price and supermarket
 @app.route("/meals/<int:meal_id>/ingredients/<int:ingredient_id>/JSON")
 def ingredientJSON(meal_id, ingredient_id):
     ingredients = session.query(MealIngredient).filter_by(meal_id=meal_id, id=ingredient_id).one()
     return jsonify(Ingredients_Data=ingredients.serialize)
 
-
-
-
-
-
+# End of file !Important!
 if __name__ == "__main__":
     app.secret_key = CLIENT_ID
     app.debug = True

@@ -21,6 +21,13 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
+#Create a user in the databank
+User1 = User(name="Nada Baynom",
+              email="nbaynom0@skype.com",
+              picture='http://dummyimage.com/200x200.png/ff4444/ffffff')
+session.add(User1)
+session.commit()
+
 #Ingredients for Domi's Homemade Cheeseburger
 meal1 = Meal(name="Domis Homemade Cheeseburger", recipe="Den Grill auf ca. 250 Grad vorheizen. Zwiebeln in Ringe schneiden, Kaese reiben und bereitstellen. Tomaten in Scheiben schneiden, Salat waschen. Aus Ketchup, Senf und BBQ-Sauce zu gleichen Teilen eine Burgersauce herstellen. Aus dem Rindfleisch selbst Hackfleisch drehen oder gekauftes Rinderhack verwenden. Mit Salz und Pfeffer wuerzen und gut vermengen. Daraus ca. 200 g schwere Kugeln formen und dabei ein wenig kneten.")
 
