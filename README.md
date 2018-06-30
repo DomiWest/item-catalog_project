@@ -54,22 +54,20 @@ The generated database includes three tables:
 The users table includes information about the users of the application:
 
 |id|name|email|picture|
-| -
+| --- | --- | --- | --- |--- |--- |--- |
 ||||||
 
 The meal table includes the meal recipe:  
 
 |id|name|recipe|
-| -
+| --- | --- | --- | --- |--- |--- |--- |
 |||||
 
 The meal_ingredient table includes all the necessary ingredients for a meal and metadata for each of these ingredietns:
 
 |name|id|price|supermarket|meal_id|meal|
-| -
+| --- | --- | --- | --- |--- |--- |--- |
 ||||||||
-
-
 
 ###### Add initial data to the database:
 
