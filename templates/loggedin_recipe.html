@@ -1,0 +1,34 @@
+{% block content %}
+{% include "header_logout-button.html" %}
+
+    <div class="all-meals">
+      <div class="back">
+        <button type="button" class="back-button" onclick="location.href='{{url_for('showMeals')}}';">
+          <span class="back-text">&laquo; Zurück</span>
+        </button>
+      </div>
+      <div class="recipe-title">
+        <p class="meals-name">{{meals.name}}</p>
+      </div>
+
+      <div class="ingredients">
+        <h3>Zutaten</h3>
+        {% for ingredient in ingredients %}
+        <ul>
+          <li class="ingredients-text"><a href="{{url_for('ingredientInfo', meal_id = meals.id, ingredient_id = ingredient.id)}}" style="color: #2d3c49;">{{ingredient.name}}</a></li>
+        </ul>
+        <div class="separator"></div>
+        {% endfor %}
+        <button class="add-ingredient" onclick="location.href = '{{url_for('newIngredient', meal_id = meals.id)}}';">Zutat hinzufügen</button>
+      </div>
+
+      <div class="recipe-tile">
+        <h3>Zubereitung</h3>
+        <div class="recipe-text">
+          {{meals.recipe}}
+        </div>
+        <button class="edit-recipe" onclick="location.href = '{{url_for('editMeal', meal_id = meals.id)}}';">Rezept bearbeiten</button>
+        <button class="delete-recipe-final" onclick="location.href = '{{url_for('deleteMeal', meal_id = meals.id)}}';">Rezept löschen</button>
+      </div>
+    </div>
+{% endblock %}

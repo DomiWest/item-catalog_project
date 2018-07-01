@@ -58,6 +58,19 @@ header {
   border: 0;
 }
 
+.logout {
+  position: fixed;
+  right: 3%;
+  background-color: #798EF5;
+  border-radius: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 12%;
+  transition: all 0.5s;
+  cursor: pointer;
+  border: 0;
+}
+
 .login-text {
   font-family: sans-serif;
   color: white;

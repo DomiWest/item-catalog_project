@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+{% block content %}
+    <header>
+      <img class="logo" src="/static/kochbuch.jpg" alt="Kochbuch">
+      <h1>LISA'S UND DOMI'S LIEBLINGSREZEPTE</h1>
+      <button class="logout" onclick="location.href = '{{url_for('gdisconnect')}}';"><span class="login-text">LOGOUT</span></button>
+		</header>
+
+    <div class="description">
+      <div class="description-text">
+        Auf dieser Seite finden sich unsere Lieblingsrezepte.<br>
+        <br>Vor allem an Wochenenden werden diese regelmäßig von uns zubereitet.
+        Nach dem Login ist es möglich neue Rezepte hinzuzufügen und vorhandene
+        Rezepte zu löschen oder zu bearbeiten.<br>
+        <br>Viel Spaß beim nachkochen.
+      </div>
+    </div>
+{% endblock %}

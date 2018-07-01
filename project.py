@@ -218,7 +218,10 @@ Function that connects to the landing page of the app --> publicmeals.html
 @app.route("/meals/")
 def showMeals():
     meals = session.query(Meal).order_by(Meal.name)
-    return render_template("publicmeals.html", meals=meals)
+    if "username" not in login_session:
+        return render_template("publicmeals.html", meals=meals)
+    else:
+        return render_template("loggedin_meals.html", meals=meals)
 
 '''
 Function that connects to the page where new meals can be added to
@@ -254,7 +257,7 @@ def deleteMeal(meal_id):
     if "username" not in login_session:
         return redirect("/login")
     if deletedMeal.user_id != login_session['user_id']:
-       return "<script>function myFunction() {alert('You are not authorized to \
+        return "<script>function myFunction() {alert('You are not authorized to \
          delete this meal.Please create your own meal to delete');}\
          </script><body onLoad = 'myFunction()''>"
     if request.method == "POST":
@@ -277,8 +280,12 @@ def showIngredients(meal_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(MealIngredient).filter_by(
         meal_id=meal_id).all()
-    return render_template(
-        "publicrecipe.html", meals=meals, ingredients=ingredients)
+    if "username" not in login_session:
+        return render_template(
+            "publicrecipe.html", meals=meals, ingredients=ingredients)
+    else:
+        return render_template(
+            "loggedin_recipe.html", meals=meals, ingredients=ingredients)
 
 '''
 Function that connects to the page where new ingredients
@@ -340,7 +347,7 @@ def editMeal(meal_id):
     if "username" not in login_session:
         return redirect("/login")
     if meals.user_id != login_session['user_id']:
-       return "<script>function myFunction() {alert('You are not authorized to \
+        return "<script>function myFunction() {alert('You are not authorized to \
          edit this meal.Please create your own meal to edit');}\
          </script><body onLoad = 'myFunction()''>"
     if request.method == "POST":
@@ -368,8 +375,12 @@ def ingredientInfo(meal_id, ingredient_id):
     meals = session.query(Meal).filter_by(id=meal_id).one()
     ingredients = session.query(
         MealIngredient).filter_by(meal_id=meal_id, id=ingredient_id).one()
-    return render_template(
-        "publicincredient.html", meals=meals, ingredients=ingredients)
+    if "username" not in login_session:
+        return render_template(
+            "publicincredient.html", meals=meals, ingredients=ingredients)
+    else:
+        return render_template(
+            "loggedin_incredient.html", meals=meals, ingredients=ingredients)
 
 '''Function that connects to the page where specific information for
 ingredients (name, price, supermarket) can be edited
@@ -386,7 +397,7 @@ def editIngredient(meal_id, ingredient_id):
     if "username" not in login_session:
         return redirect("/login")
     if meals.user_id != login_session['user_id']:
-       return "<script>function myFunction() {alert('You are not authorized to \
+        return "<script>function myFunction() {alert('You are not authorized to \
          edit this ingredient.Please create your own ingredient to delete');}\
          </script><body onLoad = 'myFunction()''>"
     if request.method == "POST":
@@ -422,8 +433,9 @@ def deleteIngredient(meal_id, ingredient_id):
     if "username" not in login_session:
         return redirect("/login")
     if meals.user_id != login_session['user_id']:
-       return "<script>function myFunction() {alert('You are not authorized to \
-         delete this ingredient.Please create your own ingredient to delete');}\
+        return "<script>function myFunction() {alert('You are not authorized to\
+         delete this ingredient.Please create your own\
+         ingredient to delete');}\
          </script><body onLoad = 'myFunction()''>"
     if request.method == "POST":
         session.delete(deletedIngredient)
