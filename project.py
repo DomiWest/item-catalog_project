@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for
 from flask import flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Meal, MealIngredient
+from database_setup import Base, Meal, MealIngredient, User
 from flask import session as login_session
 import random
 import string
@@ -130,6 +130,17 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+
+    '''See if user exists or if it doesn't make a new one'''
+    print 'User email is' + str(login_session['email'])
+    user_id = getUserID(login_session['email'])
+    if user_id:
+        print 'Existing user#' + str(user_id) + 'matches this email'
+    else:
+        user_id = createUser(login_session)
+        print 'New user_id#' + str(user_id) + 'created'
+    login_session['user_id'] = user_id
+    print 'Login session is tied to :id#' + str(login_session['user_id'])
 
     output = ''
     output += '<h1>Welcome, '
